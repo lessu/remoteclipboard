@@ -1,5 +1,18 @@
 Remote Clipboard
 
+# Limitation
+- This version is uncompleted. you may occur **BUGS**.
+
+- Failsafe is not done carefully.
+
+- The max clipboard buffer size is limited to a mtu size (1400).
+as it use tcp to comminucate,and multi package is not included yet.
+
+- Multi-user/Multi-slot is not completed(would be added in furture)
+
+- No encrypt and no safety guaranteed. Please use it in LAN.
+A safe alternative is to use ssh.(see srcc/srcp in this project folder as an example)
+
 # Description
 Remote clipboard has 3 bins.
 - `rcp`: remote-clipboard paste
@@ -55,3 +68,32 @@ W.I.P
 # Install
 copy
 `target/release/{rcp,rcc,rcd}` to you path
+
+
+# Example
+## On server
+```
+rcd -l 0.0.0.0 -p 3298
+```
+
+## On copy client
+
+edit `~/.rclip_profile`
+```
+host=<to-server>
+port=3298
+```
+
+```
+rcc 12345
+```
+
+## On paste client
+edit `~/.rclip_profile` too
+```
+rcp 
+```
+output:
+```
+12345
+```

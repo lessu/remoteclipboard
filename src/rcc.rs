@@ -51,7 +51,7 @@ fn main() -> ExitCode{
         stream.write(format!("c:{}",base64_value).as_bytes()).unwrap();
         return ExitCode::SUCCESS;
     }else{
-        eprintln!("fail to connect server.");
+        eprintln!("fail to connect to server.");
         return ExitCode::FAILURE;
     }
 

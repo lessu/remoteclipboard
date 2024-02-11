@@ -1,0 +1,5 @@
+#!/bin/bash
+HOST="home"
+
+INPUT=`ssh $HOST cat "/tmp/rcp_text"`
+echo $INPUT | base64 -d
