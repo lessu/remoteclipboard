@@ -3,6 +3,12 @@ name = "network-clipboard"
 version = "0.1.0"
 edition = "2018"
 
+[profile.release]
+strip = true
+opt-level = "z"
+lto = true
+panic = "abort"
+
 [[bin]]
 name = "rcc"
 path = "src/rcc.rs"
@@ -16,5 +22,6 @@ name = "rcp"
 path = "src/rcp.rs"
 
 [dependencies]
-clap = "4.2.5"
-# getopts = "0.2"
+# clap = "4.2.5"
+getopts = "0.2"
+base64 = "0.21.7"

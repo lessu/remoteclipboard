@@ -1,14 +1,16 @@
-use std::{io::Write, env, net::TcpStream, process::ExitCode};
+use std::{io::{Write,Read}, env,net::TcpStream, process::ExitCode};
 use getopts::Options;
 use base64::{self, prelude::BASE64_STANDARD, Engine};
 mod common;
 use crate::common::read_config;
+
 
 fn print_usage(_program:&str,opts:Options){
     let brief:String = String::new();
     opts.usage(&brief);
     println!("{}",&brief);
 }
+
 
 fn main() -> ExitCode{
     let home_path = env!("HOME");
@@ -39,19 +41,24 @@ fn main() -> ExitCode{
     }
     let config = read_config(&profile_path,is_default_profile_path);
     
-    let input = if !matches.free.is_empty() {
-        matches.free[0].clone()
-    } else {
-        print_usage(&program, opts);
-        return ExitCode::FAILURE;
-    };
-    
     if let Ok(mut stream) = TcpStream::connect(format!("{}:{}",config.host,config.port)){
-        let base64_value = BASE64_STANDARD.encode(input);
-        stream.write(format!("c:{}",base64_value).as_bytes()).unwrap();
-        return ExitCode::SUCCESS;
+        let mut output = [0; 4096];
+        stream.write("p:".as_bytes()).unwrap();
+        let size = stream.read(&mut output).unwrap();
+        let output_str = String::from_utf8(output[0..size].to_vec()).unwrap();
+        match BASE64_STANDARD.decode(output_str) {
+            Ok(content) => {
+                println!("{}",String::from_utf8(content).unwrap());
+                return ExitCode::SUCCESS;
+            }
+            Err(e) => {
+                eprintln!("bad content from server,{}",e);
+                return ExitCode::FAILURE;
+            }
+        }
+        
     }else{
-        eprintln!("fail to connect server.");
+        eprintln!("failed to connect with server");
         return ExitCode::FAILURE;
     }
 
